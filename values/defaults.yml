@@ -1,0 +1,6 @@
+---
+defaults:
+  defaults:
+  vpc_id: "vpc-0569382dab12c0883"
+  environment: "production"
+  owner: "DevOps"
