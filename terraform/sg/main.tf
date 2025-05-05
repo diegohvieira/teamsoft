@@ -1,7 +1,7 @@
 locals {
   sg_config_path = "../../values"
   instance_sets  = fileset(local.sg_config_path, "sg.yml")
-  sg             = flatten([
+  sg = flatten([
     for instance in local.instance_sets : [
       for idx, content in yamldecode(file("${local.sg_config_path}/${instance}")).sg : content
     ]
@@ -59,12 +59,12 @@ resource "aws_vpc_security_group_ingress_rule" "ipv4" {
 resource "aws_vpc_security_group_egress_rule" "ipv4" {
   for_each = {
     for rule in local.sg_egress_rules :
-    "${rule.sg_key}-${rule.rule.cidr_ipv4}-${rule.rule.from_port}" => rule
+    "${rule.sg_key}-${can(rule.rule.cidr_ipv4) ? rule.rule.cidr_ipv4 : "all"}-${can(rule.rule.from_port) ? rule.rule.from_port : "all"}" => rule
   }
 
   security_group_id = aws_security_group.this[each.value.sg_key].id
   cidr_ipv4         = try(each.value.rule.cidr_ipv4, "0.0.0.0/0")
-  from_port         = try(each.value.rule.from_port, null)
-  to_port           = try(each.value.rule.to_port, null)
+  from_port         = try(each.value.rule.from_port, "-1")
+  to_port           = try(each.value.rule.to_port, "-1")
   ip_protocol       = try(each.value.rule.protocol, "-1")
 }
