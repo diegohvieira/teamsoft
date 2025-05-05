@@ -1,0 +1,27 @@
+---
+sg:
+  - name: "web-sg"
+    vpc_id: "vpc-0569382dab12c0883"
+    ingress:
+      - cidr_ipv4: "0.0.0.0/0"
+        from_port: 80
+        to_port: 80
+        protocol: "tcp"
+      - cidr_ipv4: "0.0.0.0/0"
+        from_port: 443
+        to_port: 443
+        protocol: "tcp"
+    egress:
+      - cidr_ipv4: "0.0.0.0/0"
+        from_port: 0
+        to_port: 0
+        protocol: "-1"
+
+  - name: "ssh-access-sg"
+    description: "Security group for database servers"
+    vpc_id: "vpc-0569382dab12c0883"
+    ingress:
+      - cidr_ipv4: "206.42.52.178/32"
+        from_port: 22
+        to_port: 22
+        protocol: "tcp"
